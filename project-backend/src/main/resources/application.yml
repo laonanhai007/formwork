@@ -1,1 +1,6 @@
-
+spring:
+  datasource:
+    password: 666
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/javaWeb_final_db?characterEncoding=utf-8
