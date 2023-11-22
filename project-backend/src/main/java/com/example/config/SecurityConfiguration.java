@@ -2,6 +2,7 @@ package com.example.config;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.RestBean;
+import jakarta.annotation.Resource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,22 +13,26 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, PersistentTokenRepository persistentTokenRepository) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(registry -> registry.anyRequest().authenticated())
                 .formLogin(configurer -> configurer
@@ -41,8 +46,23 @@ public class SecurityConfiguration {
                 .exceptionHandling(configurer -> configurer
                         .authenticationEntryPoint(this::onAuthenticationFailure))
                 .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
+                .rememberMe(configurer -> configurer.rememberMeParameter("remember")
+                        .tokenValiditySeconds(3600 * 24 * 7)
+                        .tokenRepository(persistentTokenRepository))
                 .build();
     }
+
+    @Resource
+    private DataSource dataSource;
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
+        repository.setDataSource(dataSource);
+        repository.setCreateTableOnStartup(true);
+        return repository;
+    }
+
 
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();

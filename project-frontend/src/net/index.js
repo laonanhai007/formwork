@@ -17,10 +17,8 @@ function post(url, data, success, failure = defaultFailure, error = defaultError
         withCredentials: true
     }).then(data => {
         if (data.data.success) {
-            console.log('success')
             success(data.data.message, data.data.statusCode)
         } else {
-            console.log('failure')
             failure(data.data.message)
         }
     }).catch(error)
