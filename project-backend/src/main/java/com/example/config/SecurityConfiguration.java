@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, PersistentTokenRepository persistentTokenRepository) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(registry -> registry.anyRequest().authenticated())
+                .authorizeHttpRequests(registry -> registry
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .formLogin(configurer -> configurer
                         .loginProcessingUrl("/api/auth/login")
                         .successHandler(this::onAuthenticationSuccess)
@@ -59,7 +63,7 @@ public class SecurityConfiguration {
     public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
         repository.setDataSource(dataSource);
-        repository.setCreateTableOnStartup(true);
+        repository.setCreateTableOnStartup(false);
         return repository;
     }
 

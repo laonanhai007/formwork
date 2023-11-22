@@ -7,8 +7,9 @@
         <el-form style="margin-top: 40px"
                  :model="form"
                  :rules="rules"
-                @validate="myValidate"
-            >
+                 @validate="myValidate"
+                 ref="formRef"
+        >
             <el-form-item prop="username">
                 <el-input type="text" placeholder="用户名" v-model="form.username">
                     <template #prefix>
@@ -48,7 +49,7 @@
             <el-form-item prop="code">
                 <el-row style="width: 100%;">
                     <el-col :span="16">
-                        <el-input type="text" placeholder="邮箱验证码" v-model="form.code">
+                        <el-input type="text" placeholder="邮箱验证码" v-model.number="form.code">
                             <template #prefix>
                                 <el-icon>
                                     <Check/>
@@ -64,7 +65,7 @@
 
         </el-form>
         <div style="margin-top: 60px">
-            <el-button style="width: 200px;font-size: 16px" type="warning" @click="">
+            <el-button style="width: 200px;font-size: 16px" type="warning" @click="register">
                 立即注册
             </el-button>
         </div>
@@ -127,7 +128,7 @@
         passwordRepeat: [
             {validator: validatePasswordRepeat, trigger: ['blur', 'change']}
         ],
-        email:[
+        email: [
             {required: true, message: '请填写邮箱'},
             {type: 'email', message: '请填写正确邮箱格式'}
         ],
@@ -135,13 +136,24 @@
             {required: true, message: '请填写验证码'},
             {type: 'number', message: '验证码必须为数字'}
         ]
+
     })
 
     const isEmail = ref(false)
-    const myValidate = (prop,isValid)=>{
-        if (prop === 'email'){
+    const myValidate = (prop, isValid) => {
+        if (prop === 'email') {
             isEmail.value = isValid
         }
+    }
+    const formRef = ref()
+    const register = () => {
+        formRef.value.validate((valid) => {
+            if (valid) {
+            //     TODO 注册请求
+            } else {
+                return false
+            }
+        })
     }
 </script>
 
