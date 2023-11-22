@@ -34,7 +34,7 @@
                 <span style="color: gray">没有账号?</span>
             </el-divider>
             <div style="margin-top: 10px">
-                <el-button style="width: 200px;font-size: 16px" type="warning">立即注册</el-button>
+                <el-button style="width: 200px;font-size: 16px" type="warning" @click="router.push('/register')">立即注册</el-button>
             </div>
 
         </div>
