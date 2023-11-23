@@ -151,7 +151,11 @@
     const register = () => {
         formRef.value.validate((valid) => {
             if (valid) {
-            //     TODO 注册请求
+                post('/api/auth/register',form.value,(message)=>{
+                    ElMessage.success(message)
+                    router.push("/")
+
+                })
             } else {
                 return false
             }

@@ -20,14 +20,32 @@ public class AuthController {
 
     @Resource
     private AuthService authService;
+
     @PostMapping("/valid-email")
-    public RestBean<String> sendValidateEmail(@Pattern (regexp = EMAIL_REGEXP)
-                                          @RequestParam("email") String email,
-                                              HttpSession session){
-        if (authService.sendValidateEmail(email,session.getId())) {
+    public RestBean<String> sendValidateEmail(@Pattern(regexp = EMAIL_REGEXP)
+                                              @RequestParam("email") String email,
+                                              HttpSession session) {
+        String message = authService.sendValidateEmail(email, session.getId());
+        if (message == null) {
             return RestBean.success("已发送邮件,注意查收");
-        }else {
-            return RestBean.failure(401,"服务器发送邮件异常");
+        } else {
+            return RestBean.failure(401, message);
+        }
+    }
+
+    @PostMapping("/register")
+//    TODO 字段校验
+    public RestBean register(@RequestParam("username") String username,
+                             @RequestParam("password") String password,
+                             @RequestParam("email") String email,
+                             @RequestParam("code") String code,
+                             HttpSession session) {
+
+        String message = authService.validateAndRegister(username, password, email, code, session.getId());
+        if (message == null) {
+            return RestBean.success("注册成功");
+        } else {
+            return RestBean.failure(401, message);
         }
     }
 }

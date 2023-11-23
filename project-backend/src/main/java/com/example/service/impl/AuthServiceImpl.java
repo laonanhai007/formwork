@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.example.mapper.AccountMapper;
 import com.example.service.AuthService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,8 +8,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -21,14 +24,20 @@ public class AuthServiceImpl implements AuthService {
     MailSender mailSender;
     @Resource
     RedisTemplate redisTemplate;
-
+    @Resource
+    AccountMapper accountMapper;
+    @Resource
+    PasswordEncoder encoder;
     @Override
-    public boolean sendValidateEmail(String email, String sessionId) {
+    public String sendValidateEmail(String email, String sessionId) {
+        if (accountMapper.findAccountByEmail(email) != null) {
+            return "邮箱已存在,请更换邮箱";
+        }
         String key = getKey(sessionId, email);
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             Long expire = Optional.ofNullable(redisTemplate.getExpire(key, TimeUnit.SECONDS)).orElse(0L);
             if (expire > 120) {
-                return false;
+                return "请稍后再试";
             }
         }
         Random random = new Random();
@@ -41,12 +50,35 @@ public class AuthServiceImpl implements AuthService {
         try {
             mailSender.send(simpleMailMessage);
             redisTemplate.opsForValue().set(key, String.valueOf(code), 3, TimeUnit.MINUTES);
-            return true;
+            return null;
         } catch (MailException e) {
             e.printStackTrace();
-            return false;
+            return "邮件发送失败";
         }
 
+    }
+
+    @Override
+    public String validateAndRegister(String username, String password, String email, String code, String sessionId) {
+        String key = getKey(sessionId, email);
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+            return "邮箱地址和获取验证的邮箱不同";
+        }
+        if (redisTemplate.getExpire(key, TimeUnit.SECONDS) < 0) {
+            return "验证码超时,请重新获取验证码";
+        }
+        if (!Objects.equals(redisTemplate.opsForValue().get(key), code)) {
+            return "验证码错误,请仔细检查验证码";
+        }
+        if (accountMapper.findAccountByUsernameOrEmail(username) != null){
+            return "用户名已存在,请更换用户名";
+        }
+        password = encoder.encode(password);
+        if (accountMapper.createAccount(email,username,password)<0) {
+            return "创建用户失败,请联系管理员";
+        }
+        redisTemplate.delete(key);
+        return null;
     }
 
     private String getKey(String sessionId, String email) {
