@@ -1,10 +1,7 @@
 package com.example.mapper;
 
 import com.example.entity.Account;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface AccountMapper {
@@ -16,5 +13,8 @@ public interface AccountMapper {
     Account findAccountByEmail(String email);
 
     @Insert("insert into db_account(email, username, password) VALUES (#{email},#{username},#{password})")
-    int createAccount(@Param("email") String email, @Param("username")String username, @Param("password")String password);
+    int createAccount(@Param("email") String email, @Param("username") String username, @Param("password") String password);
+
+    @Update("update  db_account set password = #{password} where email = #{email}")
+    int updatePasswordByEmail(@Param("password") String password, @Param("email") String email);
 }

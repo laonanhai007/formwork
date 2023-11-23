@@ -1,14 +1,16 @@
 package com.example.service.impl;
 
+import com.example.entity.Account;
 import com.example.mapper.AccountMapper;
 import com.example.service.AuthService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -26,14 +28,19 @@ public class AuthServiceImpl implements AuthService {
     RedisTemplate redisTemplate;
     @Resource
     AccountMapper accountMapper;
-    @Resource
-    PasswordEncoder encoder;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @Override
-    public String sendValidateEmail(String email, String sessionId) {
-        if (accountMapper.findAccountByEmail(email) != null) {
-            return "邮箱已存在,请更换邮箱";
+    public String sendValidateEmail(String email, String sessionId, boolean hasAccount) {
+        Account account = accountMapper.findAccountByEmail(email);
+        if (account == null && hasAccount){
+            return "不存在此邮箱";
         }
-        String key = getKey(sessionId, email);
+        if (account != null && !hasAccount){
+            return "该邮箱已存在,请更换邮箱";
+        }
+        String key = getKey(sessionId, email)+":"+hasAccount;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             Long expire = Optional.ofNullable(redisTemplate.getExpire(key, TimeUnit.SECONDS)).orElse(0L);
             if (expire > 120) {
@@ -58,9 +65,10 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+
     @Override
     public String validateAndRegister(String username, String password, String email, String code, String sessionId) {
-        String key = getKey(sessionId, email);
+        String key = getKey(sessionId, email)+":false";
         if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
             return "邮箱地址和获取验证的邮箱不同";
         }
@@ -70,14 +78,45 @@ public class AuthServiceImpl implements AuthService {
         if (!Objects.equals(redisTemplate.opsForValue().get(key), code)) {
             return "验证码错误,请仔细检查验证码";
         }
-        if (accountMapper.findAccountByUsernameOrEmail(username) != null){
+        if (accountMapper.findAccountByUsernameOrEmail(username) != null) {
             return "用户名已存在,请更换用户名";
         }
         password = encoder.encode(password);
-        if (accountMapper.createAccount(email,username,password)<0) {
+        if (accountMapper.createAccount(email, username, password) < 0) {
             return "创建用户失败,请联系管理员";
         }
         redisTemplate.delete(key);
+        return null;
+    }
+
+//    重置密码的验证
+    @Override
+    public String validateAndReset(String email, String code, String sessionId) {
+        String key = getKey(sessionId, email)+":true";
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+            return "邮箱地址和获取验证的邮箱不同";
+        }
+        if (redisTemplate.getExpire(key, TimeUnit.SECONDS) < 0) {
+            return "验证码超时,请重新获取验证码";
+        }
+        if (!Objects.equals(redisTemplate.opsForValue().get(key), code)) {
+            return "验证码错误,请仔细检查验证码";
+        }
+        redisTemplate.delete(key);
+        return null;
+    }
+
+    @Override
+    public String resetPassword(String password, HttpSession session) {
+        String email = (String) session.getAttribute("reset-email");
+        if (email == null){
+            return "请先完成邮箱验证";
+        }
+        int i =  accountMapper.updatePasswordByEmail(encoder.encode(password),email);
+        if (i< 1) {
+            return "重置密码异常,请联系管理员";
+        }
+        session.removeAttribute("reset-email");
         return null;
     }
 

@@ -163,7 +163,7 @@
     }
 
     const validEmail = ()=>{
-        post('/api/auth/valid-email',{
+        post('/api/auth/valid-register-email',{
             email:form.value.email
         },(message)=>{
             ElMessage.success(message)
