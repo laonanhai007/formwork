@@ -58,7 +58,7 @@
                         </el-input>
                     </el-col>
                     <el-col :span="8" style="text-align: right">
-                        <el-button type="success" :disabled="!isEmail">获取验证码</el-button>
+                        <el-button @click="validEmail" type="success" :disabled="!isEmail">获取验证码</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -85,6 +85,8 @@
     import {Check, Lock, Message, User} from "@element-plus/icons-vue";
     import router from "@/router";
     import {ref, reactive} from "vue";
+    import {post} from "@/net";
+    import {ElMessage} from "element-plus";
 
     const form = ref({
         username: '',
@@ -153,6 +155,14 @@
             } else {
                 return false
             }
+        })
+    }
+
+    const validEmail = ()=>{
+        post('/api/auth/valid-email',{
+            email:form.value.email
+        },(message)=>{
+            ElMessage.success(message)
         })
     }
 </script>

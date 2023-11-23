@@ -1,5 +1,5 @@
 package com.example.service;
 
 public interface AuthService {
-    boolean sendValidateEmail(String email);
+    boolean sendValidateEmail(String email,String sessionId);
 }

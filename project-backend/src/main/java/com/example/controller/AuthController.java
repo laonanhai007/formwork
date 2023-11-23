@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.RestBean;
 import com.example.service.AuthService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +21,10 @@ public class AuthController {
     @Resource
     private AuthService authService;
     @PostMapping("/valid-email")
-    public RestBean sendValidateEmail(@Pattern (regexp = EMAIL_REGEXP)
-                                          @RequestParam("email") String email){
-
-        if (authService.sendValidateEmail(email)) {
+    public RestBean<String> sendValidateEmail(@Pattern (regexp = EMAIL_REGEXP)
+                                          @RequestParam("email") String email,
+                                              HttpSession session){
+        if (authService.sendValidateEmail(email,session.getId())) {
             return RestBean.success("已发送邮件,注意查收");
         }else {
             return RestBean.failure(401,"服务器发送邮件异常");

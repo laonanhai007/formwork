@@ -4,3 +4,14 @@ spring:
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/javaWeb_final_db?characterEncoding=utf-8
+  mail:
+    host: smtp.qq.com
+    username: 1422941961@qq.com
+    password: hmkeeupvtbdsiidi
+    port: 465
+    properties:
+      from: 1422941961@qq.com
+      mail:
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
