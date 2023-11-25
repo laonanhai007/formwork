@@ -1,36 +1,41 @@
 <template>
     <div style="height: 100vh">
         <el-container style="height: 100vh">
-            <el-aside width="250px" style="border-right: solid 1px #c2c2c2;text-align: center">
-                <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-                    <el-radio-button :label="false">expand</el-radio-button>
-                    <el-radio-button :label="true">collapse</el-radio-button>
-                </el-radio-group>
+            <el-aside :width="isCollapse?'60px':'220px'"
+                      style="border-right: solid 1px #c2c2c2;text-align: center;transition: 0.3s">
                 <el-menu
-                        style=""
+                    router
+                        style="border: none;width: 100%"
                         :collapse="isCollapse"
-                        @open="handleOpen"
-                        @close="handleClose"
                 >
-
-                    <el-menu-item index="1">
-                        <el-icon><icon-menu/></el-icon>
+                    <el-menu-item index="/">
+                        <el-icon>
+                            <icon-menu/>
+                        </el-icon>
                         <template #title>帖子列表</template>
                     </el-menu-item>
                     <el-menu-item index="2">
-                        <el-icon><document/></el-icon>
+                        <el-icon>
+                            <document/>
+                        </el-icon>
                         <template #title>表白墙</template>
                     </el-menu-item>
                     <el-menu-item index="3">
-                        <el-icon><setting/></el-icon>
+                        <el-icon>
+                            <setting/>
+                        </el-icon>
                         <template #title>帖子管理</template>
                     </el-menu-item>
                     <el-menu-item index="4">
-                        <el-icon><setting/></el-icon>
+                        <el-icon>
+                            <Star/>
+                        </el-icon>
                         <template #title>我的收藏</template>
                     </el-menu-item>
-                    <el-menu-item index="5">
-                        <el-icon><setting/></el-icon>
+                    <el-menu-item index="/index/settings" >
+                        <el-icon>
+                            <setting/>
+                        </el-icon>
                         <template #title>个人设置</template>
                     </el-menu-item>
                 </el-menu>
@@ -38,7 +43,11 @@
             <el-container>
                 <el-header style="border-bottom: solid 1px #c2c2c2">
                     <el-row>
-                        <el-col :span="14" style="margin: auto">
+                        <el-col :span="2" style="margin: auto">
+                            <el-button @click="isCollapse = !isCollapse" :icon="isCollapse?Expand:Fold" text
+                                       style="font-size: 24px;margin-left: -5px"/>
+                        </el-col>
+                        <el-col :span="13" style="margin: auto">
                             <el-input
                                     style="width: 400px"
                                     v-model="search"
@@ -58,7 +67,7 @@
                                 </template>
                             </el-input>
                         </el-col>
-                        <el-col :span="9" style="margin: auto">
+                        <el-col :span="8" style="margin: auto">
                             <div style="text-align: right;margin-right: 10px">
                                 <div style="font-weight: bold">
                                     {{ store.auth.user != null ? store.auth.user.username : '' }}
@@ -72,14 +81,14 @@
                             <el-dropdown trigger="click">
                                 <span class="el-dropdown-link">
                                     <el-avatar class="avatar" size="large"
-                                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                                               src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
                                     />
                                 </span>
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item :icon="CirclePlus">Action 3</el-dropdown-item>
                                         <el-dropdown-item :icon="Check">个人设置</el-dropdown-item>
-                                        <el-dropdown-item  :icon="SwitchButton" @click="logout" divided>
+                                        <el-dropdown-item :icon="SwitchButton" @click="logout" divided>
                                             <div style="color: red">退出登录</div>
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
@@ -89,10 +98,8 @@
                     </el-row>
 
                 </el-header>
-                <el-main style="">Main
-                    <div>主页</div>
-
-                    <el-button type="danger" @click="logout">退出登录</el-button>
+                <el-main style="padding: 0;">
+                    <router-view/>
                 </el-main>
             </el-container>
         </el-container>
@@ -106,13 +113,12 @@
     import {useStore} from "@/stores";
     import {
         Document,
-        Location,
         Setting,
         Menu as IconMenu,
         Search,
         CirclePlus,
         Check,
-        CircleCheck, SwitchButton,
+        SwitchButton, Expand, Fold, Star,
     } from "@element-plus/icons-vue";
     import {ref} from "vue";
 
@@ -126,21 +132,15 @@
     }
 
 
-    const isCollapse = ref(true)
-    const handleOpen = (key, keyPath) => {
-        console.log(key, keyPath)
-    }
-    const handleClose = (key, keyPath) => {
-        console.log(key, keyPath)
-    }
+    const isCollapse = ref(false)
 
     const search = ref('')
-
+const select = ref('')
 </script>
 
 <style scoped>
 
-.avatar:hover{
-    cursor: pointer;
-}
+    .avatar:hover {
+        cursor: pointer;
+    }
 </style>
