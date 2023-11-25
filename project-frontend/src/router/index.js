@@ -10,7 +10,7 @@ const router = createRouter({
             component: () => import('@/views/WelcomeView.vue'),
             children: [
                 {
-                    path: '',
+                    path: '/',
                     name: 'welcome-login',
                     component: () => import('@/components/welcome/LoginPage.vue')
                 },
@@ -32,12 +32,12 @@ const router = createRouter({
             component: () => import('@/views/IndexView.vue'),
             children:[
                 {
-                    path: '',
+                    path: '/index',
                     name:'index-postList',
                     component:()=>import('@/components/index/PostList.vue')
                 },
                 {
-                    path: 'settings',
+                    path: '/index/settings',
                     name: 'index-settings',
                     component:()=>import('@/components/index/Settings.vue')
                 }
