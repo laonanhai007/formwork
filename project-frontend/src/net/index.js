@@ -33,5 +33,4 @@ function get(url, success, failure = defaultFailure, error = defaultError) {
                 failure(data.data.message)
         }).catch(error)
 }
-
 export {post, get}

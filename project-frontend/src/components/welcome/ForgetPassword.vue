@@ -76,7 +76,7 @@
                 >
 
                     <el-form-item prop="password">
-                        <el-input type="password" placeholder="密码" v-model="form.password">
+                        <el-input type="password" placeholder="新密码" v-model="form.password">
                             <template #prefix>
                                 <el-icon>
                                     <Lock/>
@@ -85,7 +85,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="passwordRepeat">
-                        <el-input type="password" placeholder="确认密码" v-model="form.passwordRepeat">
+                        <el-input type="password" placeholder="确认新密码" v-model="form.passwordRepeat">
                             <template #prefix>
                                 <el-icon>
                                     <Lock/>

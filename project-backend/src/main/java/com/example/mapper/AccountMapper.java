@@ -1,6 +1,7 @@
 package com.example.mapper;
 
-import com.example.entity.Account;
+import com.example.entity.auth.Account;
+import com.example.entity.user.AccountDto;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
@@ -17,4 +18,7 @@ public interface AccountMapper {
 
     @Update("update  db_account set password = #{password} where email = #{email}")
     int updatePasswordByEmail(@Param("password") String password, @Param("email") String email);
+
+    @Select("select id,username,email from db_account where username = #{text} or email = #{text}")
+    AccountDto findAccountUserByUsernameOrEmail(String text);
 }

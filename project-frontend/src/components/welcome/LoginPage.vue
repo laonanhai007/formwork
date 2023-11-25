@@ -34,7 +34,9 @@
                 <span style="color: gray">没有账号?</span>
             </el-divider>
             <div style="margin-top: 10px">
-                <el-button style="width: 200px;font-size: 16px" type="warning" @click="router.push('/register')">立即注册</el-button>
+                <el-button style="width: 200px;font-size: 16px" type="warning" @click="router.push('/register')">
+                    立即注册
+                </el-button>
             </div>
 
         </div>
@@ -42,28 +44,33 @@
 </template>
 
 <script setup>
-import {Lock, User} from "@element-plus/icons-vue";
-import {ElMessage} from "element-plus";
-import {post} from "@/net";
-import {ref} from "vue";
-import router from "@/router";
+    import {Lock, User} from "@element-plus/icons-vue";
+    import {ElMessage} from "element-plus";
+    import {post} from "@/net";
+    import {ref} from "vue";
+    import router from "@/router";
+    import {useStore} from "@/stores";
 
-const form = ref({
-    username: '',
-    password: '',
-    remember: false
-})
+    const form = ref({
+        username: '',
+        password: '',
+        remember: false
+    })
+    const store = useStore()
 
-const login = () => {
-    if (!form.value.username || !form.value.password)
-        ElMessage.warning('请输入用户名或密码')
-    else {
-        post('/api/auth/login', form.value, (message,code) => {
-            ElMessage.success(message)
-            router.push('/index')
-        })
+    const login = () => {
+        if (!form.value.username || !form.value.password)
+            ElMessage.warning('请输入用户名或密码')
+        else {
+            post('/api/auth/login', form.value, (message, code) => {
+                ElMessage.success(message)
+                post('/api/user/me', null, (message) => {
+                    store.auth.user = message
+                    router.push('/index')
+                })
+            })
+        }
     }
-}
 </script>
 
 <style scoped>

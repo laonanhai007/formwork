@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.entity.Account;
+import com.example.entity.auth.Account;
 import com.example.mapper.AccountMapper;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.userdetails.User;

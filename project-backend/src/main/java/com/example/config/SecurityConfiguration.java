@@ -93,7 +93,8 @@ public class SecurityConfiguration {
 
     private void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(JSONObject.toJSONString(RestBean.failure(401, exception.getMessage())));
+
+        response.getWriter().write(JSONObject.toJSONString(RestBean.failure(399, exception.getMessage())));
 
     }
 }
