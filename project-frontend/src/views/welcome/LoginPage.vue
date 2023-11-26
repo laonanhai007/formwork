@@ -65,6 +65,7 @@
             post('/api/auth/login', form.value, (message, code) => {
                 ElMessage.success(message)
                 post('/api/user/me', null, (message) => {
+                    localStorage.setItem("user",JSON.stringify(message))
                     store.auth.user = message
                     router.push('/index')
                 })

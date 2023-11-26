@@ -1,14 +1,15 @@
 <template>
-    <div style="height: 100vh">
+    <div style="width: 100vw;height: 100vh">
         <el-container style="height: 100vh">
             <el-aside :width="isCollapse?'60px':'220px'"
                       style="border-right: solid 1px #c2c2c2;text-align: center;transition: 0.3s">
                 <el-menu
+                    :default-active="router.currentRoute.value.path"
                     router
                         style="border: none;width: 100%"
                         :collapse="isCollapse"
                 >
-                    <el-menu-item index="/">
+                    <el-menu-item index="/index">
                         <el-icon>
                             <icon-menu/>
                         </el-icon>
@@ -98,8 +99,10 @@
                     </el-row>
 
                 </el-header>
-                <el-main style="padding: 0;">
-                    <router-view/>
+                <el-main style="padding: 0;background-color: #f1e8e8">
+                    <el-scrollbar height="600px">
+                        <router-view/>
+                    </el-scrollbar>
                 </el-main>
             </el-container>
         </el-container>
@@ -126,6 +129,7 @@
     const logout = () => {
         post('/api/auth/logout', null, (msg, code) => {
             store.auth.user = null
+            localStorage.removeItem("user")
             ElMessage.success(msg)
             router.push('/')
         })

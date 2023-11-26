@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import com.example.entity.AccountInfo;
 import com.example.entity.auth.Account;
 import com.example.entity.user.AccountDto;
 import org.apache.ibatis.annotations.*;
@@ -21,4 +22,15 @@ public interface AccountMapper {
 
     @Select("select id,username,email from db_account where username = #{text} or email = #{text}")
     AccountDto findAccountUserByUsernameOrEmail(String text);
+
+    @Insert("""
+            insert into db_account_info(uid, sex,phone, qq, wx, blog, introduce) 
+            VALUES (#{uid},#{sex},#{phone},#{qq},#{wx},#{blog},#{introduce})
+            on duplicate key update 
+            uid=#{uid}, sex=#{sex}, phone=#{phone}, qq=#{qq}, wx=#{wx}, blog=#{blog}, introduce=#{introduce}
+                            """)
+    void saveInfo(AccountInfo info);
+
+    @Select("select * from db_account where id=#{id}")
+    Account findAccountById(Integer id);
 }
