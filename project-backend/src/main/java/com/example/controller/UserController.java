@@ -2,9 +2,7 @@ package com.example.controller;
 
 import com.example.entity.AccountInfo;
 import com.example.entity.RestBean;
-import com.example.entity.auth.Account;
 import com.example.entity.user.AccountDto;
-import com.example.mapper.AccountMapper;
 import com.example.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;

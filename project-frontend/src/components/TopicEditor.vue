@@ -4,14 +4,14 @@
                    direction="btt"
                    :size="600"
                    :close-on-click-modal="false"
-        @close="emit('close')">
+                   @close="emit('close')">
             <template #header>
                 <div style="font-weight: bold">发表新的帖子</div>
             </template>
             <div style="display: flex;gap: 10px">
                 <div style="width: 140px;">
-                    <el-select placeholder="选择帖子类型..." v-model="editor.type">
-                        <el-option v-for="item in types" :value="item.id" :label="item.name"/>
+                    <el-select placeholder="选择帖子类型..." v-model="editor.type" :disabled="!editor.types.length">
+                        <el-option v-for="item in editor.types" :value="item.id" :label="item.name"/>
                     </el-select>
                 </div>
                 <div style="flex: 1">
@@ -39,22 +39,21 @@
     import '@vueup/vue-quill/dist/vue-quill.snow.css';
     import {Document, Position} from "@element-plus/icons-vue";
     import {reactive} from "vue";
+    import {post} from "@/net";
 
     defineProps({
         show: Boolean
     })
-    const types = [
-        {id: 1, name: '日常闲聊', desc: '在这里分享你的各种日常'},
-        {id: 2, name: '真诚交友', desc: '在校园里寻找与自己志同道合的朋友'},
-        {id: 3, name: '问题反馈', desc: '反馈你在校园里遇到的问题'},
-        {id: 4, name: '恋爱官宣', desc: '向大家展示你的恋爱成果'},
-        {id: 5, name: '踩坑记录', desc: '将你遇到的坑分享给大家'},
-    ]
     const editor = reactive({
         type: null,
         title: '',
-        text: ''
+        text: '',
+        types: []
     })
+    post('/api/forum/types', null,(message) => {
+        editor.types = message
+    })
+
     const emit = defineEmits(['close'])
 </script>
 
@@ -68,10 +67,12 @@
     :deep(.el-drawer__header) {
         margin: 0;
     }
-    :deep(.ql-toolbar.ql-snow ){
-        border-radius: 5px 5px 0 0 ;
+
+    :deep(.ql-toolbar.ql-snow ) {
+        border-radius: 5px 5px 0 0;
     }
-    :deep(.ql-editor){
+
+    :deep(.ql-editor) {
         font-size: 14px;
     }
 </style>

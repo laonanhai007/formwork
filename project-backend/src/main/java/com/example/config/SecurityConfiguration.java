@@ -64,10 +64,12 @@ public class SecurityConfiguration {
     }
 
 
+
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
         cors.addAllowedOriginPattern("*");
         cors.setAllowCredentials(true);
+        cors.setMaxAge(3600L);
         cors.addAllowedHeader("*");
         cors.addAllowedMethod("*");
         cors.addExposedHeader("*");

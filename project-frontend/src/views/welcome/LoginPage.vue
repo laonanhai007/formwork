@@ -67,6 +67,7 @@
                 post('/api/user/me', null, (message) => {
                     localStorage.setItem("user",JSON.stringify(message))
                     store.auth.user = message
+                    console.log(store.auth.user)
                     router.push('/index')
                 })
             })

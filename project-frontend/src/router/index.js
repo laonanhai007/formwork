@@ -30,16 +30,16 @@ const router = createRouter({
             path: '/index',
             name: 'index',
             component: () => import('@/views/IndexView.vue'),
-            children:[
+            children: [
                 {
                     path: '/index',
-                    name:'index-postList',
-                    component:()=>import('@/views/index/PostList.vue')
+                    name: 'index-postList',
+                    component: () => import('@/views/index/PostList.vue')
                 },
                 {
                     path: '/index/settings',
                     name: 'index-settings',
-                    component:()=>import('@/views/index/Settings.vue')
+                    component: () => import('@/views/index/Settings.vue')
                 }
             ]
         }

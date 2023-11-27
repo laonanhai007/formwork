@@ -18,19 +18,26 @@
                 <el-row style="text-align: right">
                     <el-col :span="16" style="margin: auto">
                         <div style="font-weight: bold">
-                            {{store.auth.user.username}}
+                            {{ store.auth.user.username }}
                         </div>
                         <div style="font-size: 13px">
-                            {{store.auth.user.email}}
+                            {{ store.auth.user.email }}
                         </div>
                     </el-col>
                     <el-col :span="8" style="text-align: center">
-                        <el-avatar class="avatar" :size="70"
+                        <el-avatar class="avatar" :size="70" style="margin-top: 10px"
                                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
                         />
+                        <el-upload
+                                :action="axios.defaults.baseURL+'/api/image/avatar'"
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarUpload">
+                            <el-button type="default" size="small" round>修改头像</el-button>
+                        </el-upload>
                     </el-col>
                 </el-row>
                 <el-divider style="margin: 4px 0"/>
+
             </div>
         </div>
     </div>
@@ -38,15 +45,23 @@
 </template>
 
 <script setup>
-    import {ref,reactive} from "vue";
+    import {ref, reactive} from "vue";
     import {useStore} from "@/stores";
     import InfoSettings from "@/components/settings/InfoSettings.vue";
     import SecuritySettings from "@/components/settings/SecuritySettings.vue";
     import PrivacySettings from "@/components/settings/PrivacySettings.vue";
+    import {ElMessage} from "element-plus";
+    import axios from "axios";
     const activeName = ref('info')
 
     const store = useStore()
-
+    function beforeAvatarUpload(rawFile) {
+        if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+            ElMessage.warning('图像只能为jpg/png格式')
+        } else if (rawFile.size / 1024 / 1024 > 2) {
+            ElMessage.error('图像大小不能大于2m')
+        } else return true
+    }
 </script>
 
 <style scoped>

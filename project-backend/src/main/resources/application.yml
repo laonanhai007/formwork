@@ -18,3 +18,7 @@ spring:
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+image:
+  get-url: https://api.itbaima.net/image/api/v1/upload
+  authorization: JBD34XGISA1TEY399M5GGRWCY53NTJ6E

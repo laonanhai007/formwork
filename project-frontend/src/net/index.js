@@ -34,11 +34,12 @@ function post(url, data, success, type = 'x-www-form-urlencoded',failure = defau
 function get(url, success, failure = defaultFailure, error = defaultError) {
     axios.get(url)
         .then((data) => {
-            if (data.data.statusCode === 401) {
-                store.auth.user = null
-                localStorage.removeItem("user")
-                router.push('/')
-            } else if (data.data.success)
+            // if (data.data.statusCode === 401) {
+            //     store.auth.user = null
+            //     localStorage.removeItem("user")
+            //     router.push('/')
+            // } else
+            if (data.data.success)
                 success(data.data.message, data.data.statusCode)
             else
                 failure(data.data.message)
