@@ -4,6 +4,7 @@
                    direction="btt"
                    :size="600"
                    :close-on-click-modal="false"
+                   @open="initEditor"
                    @close="emit('close')">
             <template #header>
                 <div style="font-weight: bold">发表新的帖子</div>
@@ -15,19 +16,21 @@
                     </el-select>
                 </div>
                 <div style="flex: 1">
-                    <el-input placeholder="帖子标题..." :prefix-icon="Document"/>
+                    <el-input placeholder="帖子标题..." :prefix-icon="Document" v-model="editor.title"/>
                 </div>
             </div>
             <div style="margin-top: 15px ">
-                <quill-editor v-model:content="editor.text" style="height: 350px;border-radius: 0 0 5px 5px"
+                <quill-editor v-model:content="editor.text"
+                              style="height: 350px;border-radius: 0 0 5px 5px"
+                              ref="refEditor"
                               placeholder="开始编辑"/>
             </div>
             <el-row style="margin-top: 10px">
                 <el-col :span="12">
-                    <div style="font-size: 13px;color: gray">当前字数 666 (最大支持10000字)</div>
+                    <div style="font-size: 13px;color: gray">当前字数 {{ contentLength }} (最大支持10000字)</div>
                 </el-col>
                 <el-col :span="12" style="text-align: right">
-                    <el-button type="success" plain :icon="Position">立即发布</el-button>
+                    <el-button type="success" plain :icon="Position" @click="submitTopic">立即发布</el-button>
                 </el-col>
             </el-row>
         </el-drawer>
@@ -38,8 +41,10 @@
     import {QuillEditor} from '@vueup/vue-quill'
     import '@vueup/vue-quill/dist/vue-quill.snow.css';
     import {Document, Position} from "@element-plus/icons-vue";
-    import {reactive} from "vue";
+    import {reactive, computed, ref} from "vue";
     import {post} from "@/net";
+    import {ElMessage} from "element-plus";
+    import axios from "axios";
 
     defineProps({
         show: Boolean
@@ -50,11 +55,46 @@
         text: '',
         types: []
     })
-    post('/api/forum/types', null,(message) => {
+    post('/api/forum/types', null, (message) => {
         editor.types = message
     })
 
-    const emit = defineEmits(['close'])
+    const emit = defineEmits(['close', 'success'])
+
+    function deltaToText(delta) {
+        if (!delta.ops) {
+            return ""
+        }
+        let str = ""
+        for (let op of delta.ops) {
+            str += op.insert
+        }
+        return str.replace(/\s/g, "")
+    }
+
+    function submitTopic() {
+        console.log(editor.text)
+        post('/api/forum/create-topic', {
+            type: editor.type,
+            title:editor.title,
+            content: editor.text
+        },(msg)=>{
+            ElMessage.success(msg);
+            emit('success')
+        },'json')
+    }
+
+    const refEditor = ref()
+
+    function initEditor() {
+        refEditor.value.setContents('', 'user')
+        editor.title = ''
+        editor.type = null
+    }
+
+    const contentLength = computed(() => deltaToText(editor.text).length)
+
+
 </script>
 
 <style scoped>

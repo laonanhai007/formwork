@@ -5,7 +5,8 @@
                 <div class="create-topic" @click="showEditor = !showEditor">
                     <el-icon style="margin-top: -10px">
                         <EditPen/>
-                    </el-icon>点击发表帖子...
+                    </el-icon>
+                    点击发表帖子...
                 </div>
             </LightCard>
             <LightCard style="margin-top: 10px;height: 40px"></LightCard>
@@ -30,7 +31,7 @@
                 </LightCard>
             </div>
         </div>
-        <TopicEditor :show="showEditor" @close="showEditor = !showEditor"/>
+        <TopicEditor :show="showEditor" @success="showEditor = false" @close="showEditor = !showEditor"/>
     </div>
 </template>
 
@@ -52,7 +53,8 @@
         line-height: 40px;
         font-size: 14px;
         color: gray;
-        &:hover{
+
+        &:hover {
             cursor: pointer;
         }
     }
