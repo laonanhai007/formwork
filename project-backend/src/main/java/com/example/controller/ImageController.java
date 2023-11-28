@@ -3,8 +3,11 @@ package com.example.controller;
 import com.example.entity.RestBean;
 import com.example.entity.auth.Account;
 import com.example.entity.user.AccountDto;
+import com.example.entity.vo.TopicVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequestMapping("/api/image")
 @RestController
@@ -19,8 +22,9 @@ public class ImageController {
         return RestBean.success();
     }
 
-    @PostMapping("/test")
-    public RestBean test() {
+    @GetMapping("/test")
+    public RestBean test(@RequestBody AccountDto accountDto) {
+        System.out.println(accountDto);
         return RestBean.success("ok");
     }
 
@@ -30,4 +34,6 @@ public class ImageController {
             return RestBean.failure(400, "头像图片大小不能大于1m");
         return RestBean.success();
     }
+
+
 }

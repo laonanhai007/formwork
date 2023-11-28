@@ -22,7 +22,7 @@ public class AccountInfo {
     
     private String blog;
     
-    private String introduce;
+    private String desc;
 
 }
 

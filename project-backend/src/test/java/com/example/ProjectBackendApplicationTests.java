@@ -1,6 +1,9 @@
 package com.example;
 
+import com.example.entity.vo.TopicDetailVo;
+import com.example.entity.vo.TopicPreviewVo;
 import com.example.service.ImageService;
+import com.example.service.TopicService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 @SpringBootTest
 class ProjectBackendApplicationTests {
@@ -28,4 +32,14 @@ class ProjectBackendApplicationTests {
 
         imageService.testUploadAvatar(file,1);
     }
+
+    @Resource
+    TopicService topicService;
+    @Test
+    void testTopics(){
+        TopicDetailVo topicDetailVo = topicService.getTopicDetailVo(1);
+        System.out.println("topicDetailVo = " + topicDetailVo);
+    }
+
+
 }

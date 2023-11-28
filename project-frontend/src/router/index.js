@@ -32,15 +32,26 @@ const router = createRouter({
             component: () => import('@/views/IndexView.vue'),
             children: [
                 {
-                    path: '/index',
-                    name: 'index-postList',
-                    component: () => import('@/views/index/PostList.vue')
+                    path: '',
+                    name: 'topics',
+                    component: () => import('@/views/index/Forum.vue'),
+                    children: [
+                        {
+                            path: '',
+                            name: 'index-postList',
+                            component: () => import('@/views/index/PostList.vue')
+                        }, {
+                            path: 'topic-detail/:tid',
+                            name: 'topic-detail',
+                            component: () => import('@/components/TopicDetail.vue')
+                        }
+                    ]
                 },
                 {
                     path: '/index/settings',
                     name: 'index-settings',
                     component: () => import('@/views/index/Settings.vue')
-                }
+                },
             ]
         }
     ]

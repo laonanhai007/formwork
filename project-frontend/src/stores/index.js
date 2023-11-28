@@ -5,7 +5,10 @@ export const useStore = defineStore('store', () => {
     const auth = reactive({
         user:null
     })
-    return { auth }
+    const forum = reactive({
+        types:[]
+    })
+    return { auth,forum }
 })
 
 export class store {

@@ -24,13 +24,16 @@ public interface AccountMapper {
     AccountDto findAccountUserByUsernameOrEmail(String text);
 
     @Insert("""
-            insert into db_account_info(uid, sex,phone, qq, wx, blog, introduce) 
+            insert into db_account_info(uid, sex,phone, qq, wx, blog, `desc`) 
             VALUES (#{uid},#{sex},#{phone},#{qq},#{wx},#{blog},#{introduce})
             on duplicate key update 
-            uid=#{uid}, sex=#{sex}, phone=#{phone}, qq=#{qq}, wx=#{wx}, blog=#{blog}, introduce=#{introduce}
+            uid=#{uid}, sex=#{sex}, phone=#{phone}, qq=#{qq}, wx=#{wx}, blog=#{blog}, `desc`=#{introduce}
                             """)
     void saveInfo(AccountInfo info);
 
     @Select("select * from db_account where id=#{id}")
     Account findAccountById(Integer id);
+
+    @Select("select * from db_account_info where uid=#{id}")
+    AccountInfo findAccountInfoById(Integer id);
 }

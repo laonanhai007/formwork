@@ -2,7 +2,7 @@
     <div>
         <el-drawer :model-value="show"
                    direction="btt"
-                   :size="600"
+                   :size="700"
                    :close-on-click-modal="false"
                    @open="initEditor"
                    @close="emit('close')">
@@ -11,14 +11,27 @@
             </template>
             <div style="display: flex;gap: 10px">
                 <div style="width: 140px;">
-                    <el-select placeholder="选择帖子类型..." v-model="editor.type" :disabled="!editor.types.length">
-                        <el-option v-for="item in editor.types" :value="item.id" :label="item.name"/>
+                    <el-select placeholder="选择帖子类型..." v-model="editor.type"
+                               :disabled="!store.forum.types.length">
+                        <el-option
+                                @click="showInfo(item)"
+                                v-for="item in store.forum.types"
+                                :value="item.id" :label="item.name"
+                                :style="{color: item.color}">
+                        </el-option>
                     </el-select>
                 </div>
                 <div style="flex: 1">
                     <el-input placeholder="帖子标题..." :prefix-icon="Document" v-model="editor.title"/>
                 </div>
             </div>
+            <div style="margin-top: 5px">
+                <ColorDot :color="simpleShow.color"/>
+                <span style="font-size: 13px;color: gray;margin-left: 5px">
+                    {{ simpleShow.desc }}
+                </span>
+            </div>
+
             <div style="margin-top: 15px ">
                 <quill-editor v-model:content="editor.text"
                               style="height: 350px;border-radius: 0 0 5px 5px"
@@ -44,7 +57,8 @@
     import {reactive, computed, ref} from "vue";
     import {post} from "@/net";
     import {ElMessage} from "element-plus";
-    import axios from "axios";
+    import ColorDot from "@/components/ColorDot.vue";
+    import {useStore} from "@/stores";
 
     defineProps({
         show: Boolean
@@ -53,11 +67,9 @@
         type: null,
         title: '',
         text: '',
-        types: []
     })
-    post('/api/forum/types', null, (message) => {
-        editor.types = message
-    })
+    const store = useStore()
+
 
     const emit = defineEmits(['close', 'success'])
 
@@ -74,14 +86,15 @@
 
     function submitTopic() {
         console.log(editor.text)
-        post('/api/forum/create-topic', {
-            type: editor.type,
-            title:editor.title,
-            content: editor.text
-        },(msg)=>{
-            ElMessage.success(msg);
-            emit('success')
-        },'json')
+        post('/api/forum/create-topic',
+            {
+                type: editor.type,
+                title: editor.title,
+                content: editor.text
+            }, (msg) => {
+                ElMessage.success(msg);
+                emit('success')
+            }, 'json')
     }
 
     const refEditor = ref()
@@ -93,8 +106,15 @@
     }
 
     const contentLength = computed(() => deltaToText(editor.text).length)
+    const simpleShow = ref({
+        desc: '',
+        color: ''
+    })
 
-
+    function showInfo(item) {
+        simpleShow.value.desc = item.desc
+        simpleShow.value.color = item.color
+    }
 </script>
 
 <style scoped>

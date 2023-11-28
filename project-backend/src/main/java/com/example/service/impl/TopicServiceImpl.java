@@ -1,9 +1,13 @@
 package com.example.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.example.entity.AccountInfo;
 import com.example.entity.Topic;
 import com.example.entity.TopicType;
+import com.example.entity.vo.TopicDetailVo;
+import com.example.entity.vo.TopicPreviewVo;
 import com.example.entity.vo.TopicVo;
+import com.example.mapper.AccountMapper;
 import com.example.mapper.TopicMapper;
 import com.example.service.TopicService;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 public class TopicServiceImpl implements TopicService {
     @Autowired
     TopicMapper topicMapper;
+    @Autowired
+    AccountMapper accountMapper;
 
     @Override
     public List<TopicType> listTypes() {
@@ -47,6 +53,33 @@ public class TopicServiceImpl implements TopicService {
         return null;
     }
 
+    @Override
+    public List<TopicPreviewVo> topicList(int page, int type) {
+        List<TopicPreviewVo> topicPreviewVos;
+        if (type == 0) {
+            topicPreviewVos = topicMapper.selectTopics(page);
+        } else {
+            topicPreviewVos = topicMapper.selectTopicsByType(page, type);
+        }
+        topicPreviewVos.forEach(topicPreviewVo -> {
+            topicPreviewVo.setContent("Hello World");
+        });
+        return topicPreviewVos;
+    }
+
+    @Override
+    public TopicDetailVo getTopicDetailVo(Integer id) {
+        Topic topic = topicMapper.selectTopicById(id);
+        Integer uid = topic.getUid();
+        TopicDetailVo topicDetailVo = new TopicDetailVo();
+        BeanUtils.copyProperties(topic, topicDetailVo);
+        AccountInfo accountInfo = accountMapper.findAccountInfoById(uid);
+        TopicDetailVo.User user = new TopicDetailVo.User();
+        BeanUtils.copyProperties(accountInfo, user);
+        topicDetailVo.setUser(user);
+        return topicDetailVo;
+    }
+
     private boolean textLimitCheck(JSONObject object) {
         if (object == null) return false;
         long length = 0;
@@ -57,5 +90,14 @@ public class TopicServiceImpl implements TopicService {
             }
         }
         return true;
+    }
+
+    private StringBuilder parse(String content) {
+        StringBuilder parse = null;
+        JSONObject jsonObject = JSONObject.parseObject(content);
+        for (Object op : jsonObject.getJSONArray("ops")) {
+            parse.append(JSONObject.from(op).getString("insert"));
+        }
+        return parse;
     }
 }

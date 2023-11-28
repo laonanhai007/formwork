@@ -4,8 +4,8 @@
             <el-aside :width="isCollapse?'60px':'220px'"
                       style="border-right: solid 1px #c2c2c2;text-align: center;transition: 0.3s">
                 <el-menu
-                    :default-active="router.currentRoute.value.path"
-                    router
+                        :default-active="router.currentRoute.value.path"
+                        router
                         style="border: none;width: 100%"
                         :collapse="isCollapse"
                 >
@@ -33,7 +33,7 @@
                         </el-icon>
                         <template #title>我的收藏</template>
                     </el-menu-item>
-                    <el-menu-item index="/index/settings" >
+                    <el-menu-item index="/index/settings">
                         <el-icon>
                             <setting/>
                         </el-icon>
@@ -99,7 +99,7 @@
                     </el-row>
 
                 </el-header>
-                <el-main style="padding: 0;background-color: #f1e8e8">
+                <el-main style="padding: 0;background-color: gainsboro ">
                     <el-scrollbar height="600px">
                         <router-view/>
                     </el-scrollbar>
@@ -127,7 +127,7 @@
 
     const store = useStore()
     const logout = () => {
-        post('/api/auth/logout', null, (msg, code) => {
+        post('/api/auth/logout', null, (msg) => {
             store.auth.user = null
             localStorage.removeItem("user")
             ElMessage.success(msg)
@@ -139,7 +139,7 @@
     const isCollapse = ref(false)
 
     const search = ref('')
-const select = ref('')
+    const select = ref('')
 </script>
 
 <style scoped>

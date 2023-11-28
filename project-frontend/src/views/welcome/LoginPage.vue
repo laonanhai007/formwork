@@ -62,12 +62,11 @@
         if (!form.value.username || !form.value.password)
             ElMessage.warning('请输入用户名或密码')
         else {
-            post('/api/auth/login', form.value, (message, code) => {
+            post('/api/auth/login', form.value, (message) => {
                 ElMessage.success(message)
                 post('/api/user/me', null, (message) => {
                     localStorage.setItem("user",JSON.stringify(message))
                     store.auth.user = message
-                    console.log(store.auth.user)
                     router.push('/index')
                 })
             })

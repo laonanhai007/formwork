@@ -11,4 +11,5 @@ public class TopicType {
     Integer id;
     String name;
     String desc;
+    String color;
 }
