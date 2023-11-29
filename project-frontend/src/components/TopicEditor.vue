@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-    import {QuillEditor} from '@vueup/vue-quill'
+    import {Delta, QuillEditor} from '@vueup/vue-quill'
     import '@vueup/vue-quill/dist/vue-quill.snow.css';
     import {Document, Position} from "@element-plus/icons-vue";
     import {reactive, computed, ref} from "vue";
@@ -60,8 +60,25 @@
     import ColorDot from "@/components/ColorDot.vue";
     import {useStore} from "@/stores";
 
-    defineProps({
-        show: Boolean
+    const props = defineProps({
+        show: Boolean,
+        defaultTitle: {
+            default: '',
+            type: String
+        },
+        defaultText: {
+            default: '',
+            type: String
+        },
+        defaultType: {
+            default: '',
+            type: String
+        },
+        defaultButton: {
+            default: '立即发表主题',
+            type: String
+        },
+        tid: Number
     })
     const editor = reactive({
         type: null,
@@ -86,23 +103,36 @@
 
     function submitTopic() {
         console.log(editor.text)
-        post('/api/forum/create-topic',
-            {
+        if (props.tid != null) {
+            post('/api/forum/update-topic', {
+                id: props.tid,
                 type: editor.type,
                 title: editor.title,
                 content: editor.text
             }, (msg) => {
                 ElMessage.success(msg);
-                emit('success')
             }, 'json')
+        } else {
+            post('/api/forum/create-topic',
+                {
+                    type: editor.type,
+                    title: editor.title,
+                    content: editor.text
+                }, (msg) => {
+                    ElMessage.success(msg);
+                    emit('success')
+                }, 'json')
+        }
     }
 
     const refEditor = ref()
 
     function initEditor() {
-        refEditor.value.setContents('', 'user')
-        editor.title = ''
-        editor.type = null
+        if (props.defaultText)
+            editor.text = new Delta(JSON.parse(props.defaultText))
+        else refEditor.value.setContents('', 'user')
+        editor.title = props.defaultTitle
+        editor.type = props.defaultType
     }
 
     const contentLength = computed(() => deltaToText(editor.text).length)

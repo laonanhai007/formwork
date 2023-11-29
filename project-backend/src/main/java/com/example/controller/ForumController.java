@@ -6,6 +6,7 @@ import com.example.entity.dto.Interact;
 import com.example.entity.user.AccountDto;
 import com.example.entity.vo.TopicDetailVo;
 import com.example.entity.vo.TopicPreviewVo;
+import com.example.entity.vo.TopicUpdateVo;
 import com.example.entity.vo.TopicVo;
 import com.example.service.TopicService;
 import jakarta.validation.constraints.Pattern;
@@ -47,8 +48,9 @@ public class ForumController {
     }
 
     @GetMapping("/topic")
-    public RestBean<TopicDetailVo> topic(@RequestParam("tid") Integer tid) {
-        return RestBean.success(topicService.getTopicDetailVo(tid));
+    public RestBean<TopicDetailVo> topic(@RequestParam("tid") Integer tid,
+                                         @SessionAttribute("account") AccountDto account) {
+        return RestBean.success(topicService.getTopicDetailVo(tid, account.getId()));
     }
 
     @GetMapping("/interact")
@@ -71,5 +73,13 @@ public class ForumController {
     public RestBean<List<TopicPreviewVo>> collectTopics(@SessionAttribute("account") AccountDto accountDto) {
         List<TopicPreviewVo> topicPreviewVos = topicService.listTopicCollects(accountDto.getId());
         return RestBean.success(topicPreviewVos);
+    }
+
+    @PostMapping("/update-topic")
+    public RestBean<String> updateTopic(@RequestBody TopicUpdateVo topicUpdateVo, @SessionAttribute("account") AccountDto accountDto) {
+        String s = topicService.updateTopic(accountDto.getId(), topicUpdateVo);
+        if (s == null)
+            return RestBean.success("更新帖子成功");
+        else return RestBean.failure(402,"更新文章失败");
     }
 }

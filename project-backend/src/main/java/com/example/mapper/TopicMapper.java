@@ -4,10 +4,7 @@ import com.example.entity.Topic;
 import com.example.entity.TopicType;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.TopicPreviewVo;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
 import java.util.List;
@@ -75,4 +72,8 @@ public interface TopicMapper {
             AND dtic.uid = #{uid}
             """)
     List<TopicPreviewVo> selectCollectedTopic(Integer uid);
+
+    @Update("update db_topic set title=#{title},content = #{content},type=#{type} " +
+            "where uid = #{uid} and id=#{id} ")
+    void updateTopic(Topic topic);
 }

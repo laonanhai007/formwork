@@ -7,6 +7,7 @@ import com.example.entity.TopicType;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.TopicDetailVo;
 import com.example.entity.vo.TopicPreviewVo;
+import com.example.entity.vo.TopicUpdateVo;
 import com.example.entity.vo.TopicVo;
 import com.example.mapper.AccountMapper;
 import com.example.mapper.TopicMapper;
@@ -76,9 +77,8 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public TopicDetailVo getTopicDetailVo(Integer id) {
+    public TopicDetailVo getTopicDetailVo(Integer id, Integer uid) {
         Topic topic = topicMapper.selectTopicById(id);
-        Integer uid = topic.getUid();
         TopicDetailVo topicDetailVo = new TopicDetailVo();
         BeanUtils.copyProperties(topic, topicDetailVo);
         TopicDetailVo.Interact interact = new TopicDetailVo.Interact(
@@ -116,6 +116,22 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public void cancelCollect(Integer tid, Integer id) {
         topicMapper.deleteInteract(tid, id, "collect");
+    }
+
+    @Override
+    public String updateTopic(Integer id, TopicUpdateVo topicUpdateVo) {
+        Topic topic = new Topic();
+        topic.setTitle(topicUpdateVo.getTitle());
+        topic.setContent(topicUpdateVo.getContent().toJSONString());
+        topic.setType(topicUpdateVo.getType());
+        topic.setUid(id);
+        topic.setId(topicUpdateVo.getId());
+        try {
+            topicMapper.updateTopic(topic);
+        } catch (Exception e) {
+            return "服务器内部发生错误,请联系管理员";
+        }
+        return null;
     }
 
     private final Map<String, Boolean> state = new HashMap<>();

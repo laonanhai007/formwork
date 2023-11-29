@@ -37,8 +37,6 @@ class ProjectBackendApplicationTests {
     TopicService topicService;
     @Test
     void testTopics(){
-        TopicDetailVo topicDetailVo = topicService.getTopicDetailVo(1);
-        System.out.println("topicDetailVo = " + topicDetailVo);
     }
 
 

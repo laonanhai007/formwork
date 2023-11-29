@@ -33,6 +33,15 @@
                 <div class="topic-content" v-html="content">
                 </div>
                 <div style="text-align: right;margin-top: 30px">
+                    <InteractButton style="margin-right: 15px" name="编辑帖子"
+                                    :check="false"
+                                    color="dodgerblue"
+                                    v-if="store.auth.user.id === topic.data.user.uid"
+                    @check="edit = true">
+                        <el-icon>
+                            <EditPen/>
+                        </el-icon>
+                    </InteractButton>
                     <InteractButton style="margin-right: 5px" check-name="已点赞" name="点个赞吧!" color="pink"
                                     :check="topic.like"
                                     @check="interact('like','点赞')">
@@ -51,24 +60,32 @@
 
             </div>
         </div>
-        <div></div>
+        <TopicEditor
+            :default-type="topic.data.type"
+            :default-title="topic.data.title"
+            :default-text="topic.data.content"
+            :tid="topic.data.id"
+            :show="edit" @close="edit = false"/>
     </div>
 </template>
 
 <script setup>
     import {useRoute} from "vue-router";
-    import {reactive} from "vue";
+    import {reactive, ref} from "vue";
     import {get} from "@/net";
-    import {ArrowLeft, Male, Pointer, Star} from "@element-plus/icons-vue";
+    import {ArrowLeft, EditPen, Male, Pointer, Star} from "@element-plus/icons-vue";
     import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html'
     import {computed} from "vue";
     import router from "@/router";
     import InteractButton from "@/components/InteractButton.vue";
     import {ElMessage} from "element-plus";
+    import {useStore} from "@/stores";
+    import TopicEditor from "@/components/TopicEditor.vue";
 
+    const edit = ref(false)
     const route = useRoute()
     const tid = route.params.tid
-
+    const store = useStore()
     get(`/api/forum/topic?tid=${tid}`, data => {
         console.log(data)
         topic.data = data
@@ -130,7 +147,6 @@
         .topic-main-right {
             width: 600px;
             padding: 10px 20px;
-
             .topic-content {
                 font-size: 14px;
                 line-height: 22px;
