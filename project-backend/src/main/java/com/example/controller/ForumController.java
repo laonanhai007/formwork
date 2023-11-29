@@ -4,10 +4,7 @@ import com.example.entity.RestBean;
 import com.example.entity.TopicType;
 import com.example.entity.dto.Interact;
 import com.example.entity.user.AccountDto;
-import com.example.entity.vo.TopicDetailVo;
-import com.example.entity.vo.TopicPreviewVo;
-import com.example.entity.vo.TopicUpdateVo;
-import com.example.entity.vo.TopicVo;
+import com.example.entity.vo.*;
 import com.example.service.TopicService;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +78,11 @@ public class ForumController {
         if (s == null)
             return RestBean.success("更新帖子成功");
         else return RestBean.failure(402,"更新文章失败");
+    }
+
+    @PostMapping("/add-comment")
+    public RestBean<Void> addComment(@RequestBody AddCommentVo addCommentVo,@SessionAttribute("account") AccountDto accountDto){
+        topicService.createComment(addCommentVo,accountDto.getId());
+        return RestBean.success();
     }
 }

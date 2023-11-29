@@ -3,21 +3,20 @@ package com.example.service.impl;
 import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.AccountInfo;
 import com.example.entity.Topic;
+import com.example.entity.TopicComment;
 import com.example.entity.TopicType;
 import com.example.entity.dto.Interact;
-import com.example.entity.vo.TopicDetailVo;
-import com.example.entity.vo.TopicPreviewVo;
-import com.example.entity.vo.TopicUpdateVo;
-import com.example.entity.vo.TopicVo;
+import com.example.entity.vo.*;
 import com.example.mapper.AccountMapper;
+import com.example.mapper.TopicCommentMapper;
 import com.example.mapper.TopicMapper;
 import com.example.service.TopicService;
-import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,7 +31,8 @@ public class TopicServiceImpl implements TopicService {
     AccountMapper accountMapper;
     @Autowired
     StringRedisTemplate redisTemplate;
-
+    @Autowired
+    TopicCommentMapper commentMapper;
     @Override
     public List<TopicType> listTypes() {
         return topicMapper.findAll();
@@ -131,6 +131,17 @@ public class TopicServiceImpl implements TopicService {
         } catch (Exception e) {
             return "服务器内部发生错误,请联系管理员";
         }
+        return null;
+    }
+
+//    评论
+    @Override
+    public String createComment(AddCommentVo addCommentVo, Integer uid) {
+        TopicComment comment = new TopicComment();
+        comment.setUid(uid);
+        BeanUtils.copyProperties(addCommentVo,comment);
+        comment.setTime(new Date());
+        commentMapper.insertComment(comment);
         return null;
     }
 

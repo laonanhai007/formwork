@@ -37,7 +37,7 @@
                                     :check="false"
                                     color="dodgerblue"
                                     v-if="store.auth.user.id === topic.data.user.uid"
-                    @check="edit = true">
+                                    @check="edit = true">
                         <el-icon>
                             <EditPen/>
                         </el-icon>
@@ -57,23 +57,32 @@
                         </el-icon>
                     </InteractButton>
                 </div>
-
             </div>
         </div>
         <TopicEditor
-            :default-type="topic.data.type"
-            :default-title="topic.data.title"
-            :default-text="topic.data.content"
-            :tid="topic.data.id"
-            :show="edit" @close="edit = false"/>
+                :default-type="topic.data.type"
+                :default-title="topic.data.title"
+                :default-text="topic.data.content"
+                :tid="topic.data.id"
+                :show="edit" @close="edit = false"/>
+        <div class="add-comment"  @click="comment.show = true">
+            <el-icon>
+                <Plus />
+            </el-icon>
+        </div>
+        <TopicCommentEditor :show="comment.show"
+                            @close="comment.show = false"
+                            :tid="topic.data.id"
+                            :quote="comment.quote"/>
     </div>
+
 </template>
 
 <script setup>
     import {useRoute} from "vue-router";
     import {reactive, ref} from "vue";
     import {get} from "@/net";
-    import {ArrowLeft, EditPen, Male, Pointer, Star} from "@element-plus/icons-vue";
+    import {ArrowLeft, EditPen, Male, Plus, Pointer, Star} from "@element-plus/icons-vue";
     import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html'
     import {computed} from "vue";
     import router from "@/router";
@@ -81,6 +90,7 @@
     import {ElMessage} from "element-plus";
     import {useStore} from "@/stores";
     import TopicEditor from "@/components/TopicEditor.vue";
+    import TopicCommentEditor from "@/components/TopicCommentEditor.vue";
 
     const edit = ref(false)
     const route = useRoute()
@@ -98,6 +108,11 @@
         comments: [],
         like: false,
         collect: false
+    })
+    const comment = reactive({
+        show:false,
+        text:'',
+        quote: -1
     })
     const content = computed(() => {
         const ops = JSON.parse(topic.data.content).ops
@@ -147,11 +162,32 @@
         .topic-main-right {
             width: 600px;
             padding: 10px 20px;
+
             .topic-content {
                 font-size: 14px;
                 line-height: 22px;
                 opacity: 0.8;
             }
+        }
+    }
+
+    .add-comment {
+        position: fixed;
+        bottom: 20px;
+        right: 20cap;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: blue;
+        font-size: 18px;
+        text-align: center;
+        line-height: 45px;
+        background-color: var(--el-bg-color-overlay);
+        box-shadow: var(--el-box-shadow-light);
+
+        &:hover {
+            cursor: pointer;
+            background: var(--el-border-color-extra-light);
         }
     }
 </style>

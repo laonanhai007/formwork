@@ -2,10 +2,7 @@ package com.example.service;
 
 import com.example.entity.TopicType;
 import com.example.entity.dto.Interact;
-import com.example.entity.vo.TopicDetailVo;
-import com.example.entity.vo.TopicPreviewVo;
-import com.example.entity.vo.TopicUpdateVo;
-import com.example.entity.vo.TopicVo;
+import com.example.entity.vo.*;
 
 import java.util.List;
 
@@ -26,4 +23,5 @@ public interface TopicService {
 
     String updateTopic(Integer id, TopicUpdateVo topicUpdateVo);
 
+    String createComment(AddCommentVo addCommentVo, Integer uid);
 }
