@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +17,7 @@ public class TopicPreviewVo {
     Integer type;
     String username;
     String avatar;
+    Date time;
+    int like;
+    int collect;
 }

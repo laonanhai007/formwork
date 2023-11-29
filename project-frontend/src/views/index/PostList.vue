@@ -19,7 +19,8 @@
             <transition name="el-fade-in" mode="out-in">
                 <div v-if="list?.length">
                     <div style="margin-top: 10px" v-infinite-scroll="updateList">
-                        <LightCard style="margin-top: 10px" v-for="item in list" class="topic-card" @click="router.push('/index/topic-detail/'+item.id)">
+                        <LightCard style="margin-top: 10px" v-for="item in list" class="topic-card"
+                                   @click="router.push('/index/topic-detail/'+item.id)">
                             <div style="display: flex">
                                 <div>
                                     <el-avatar class="avatar" size="middle"
@@ -35,6 +36,20 @@
                                 <span style="font-weight: bold;margin-left: 7px"> {{ item.title }}</span>
                             </div>
                             <div class="topic-content">{{ item.content }}</div>
+                            <div style="display: flex;gap:20px;font-size:13px;margin-top: 10px">
+                                <div>
+                                    <el-icon>
+                                        <Pointer/>
+                                    </el-icon>
+                                    {{ item.like }}点赞
+                                </div>
+                                <div>
+                                    <el-icon>
+                                        <Star/>
+                                    </el-icon>
+                                    {{ item.collect }}收藏
+                                </div>
+                            </div>
                         </LightCard>
                     </div>
                 </div>
@@ -44,8 +59,12 @@
         </div>
         <div style="width: 280px;">
             <div style="position: sticky;top: 20px">
-                <LightCard>
-                    <div style="text-align: center">
+                <LightCard class="collect-list-button" @click="collects = true">
+                    <span><el-icon><FolderOpened/></el-icon> 查看我的收藏</span>
+                    <el-icon style="transform: translateY(3px)"><ArrowRightBold/></el-icon>
+                </LightCard>
+                <LightCard style="margin-top: 10px">
+                    <div style="text-align: center;">
                         <div style="font-weight: bold;font-size: 25px">论坛公告</div>
                     </div>
                     <el-divider style="margin: 8px"/>
@@ -57,25 +76,27 @@
             </div>
         </div>
         <TopicEditor :show="showEditor" @success="showEditor = false" @close="showEditor = !showEditor"/>
+        <TopicCollectList :show="collects" @close="collects = false"></TopicCollectList>
     </div>
 </template>
 
 <script setup>
     import LightCard from "@/components/LightCard.vue";
-    import {EditPen} from "@element-plus/icons-vue";
+    import {ArrowLeftBold, ArrowRightBold, EditPen, FolderOpened, Pointer, Star} from "@element-plus/icons-vue";
     import TopicEditor from "@/components/TopicEditor.vue";
-    import {reactive, ref, watch} from "vue";
+    import {ref, watch} from "vue";
     import {get, post} from "@/net";
     import {useStore} from "@/stores";
     import ColorDot from "@/components/ColorDot.vue";
     import router from "@/router";
-
+    import TopicCollectList from "@/components/TopicCollectList.vue";
 
     // const topics = reactive({
     //     list:[],
     //     type:0,
     //     page:0
     // })
+
     const type = ref(0)
     const list = ref(null)
     post('/api/forum/list-topic', {
@@ -105,7 +126,7 @@
         })
     }
 
-
+    const collects = ref(false)
 </script>
 
 <style scoped>
@@ -167,6 +188,18 @@
         &:hover {
             cursor: pointer;
             background-color: #dadada;
+        }
+    }
+
+    .collect-list-button{
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        transition: color 0.3s;
+
+        &:hover{
+            cursor: pointer;
+            opacity: 0.6;
         }
     }
 

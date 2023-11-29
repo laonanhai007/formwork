@@ -1,19 +1,18 @@
 package com.example.controller;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.example.entity.RestBean;
 import com.example.entity.TopicType;
-import com.example.entity.auth.Account;
+import com.example.entity.dto.Interact;
 import com.example.entity.user.AccountDto;
 import com.example.entity.vo.TopicDetailVo;
 import com.example.entity.vo.TopicPreviewVo;
 import com.example.entity.vo.TopicVo;
 import com.example.service.TopicService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,7 +30,7 @@ public class ForumController {
     @PostMapping("/create-topic")
     public RestBean<String> createTopic(
             @RequestBody TopicVo topicVo,
-            @SessionAttribute("account")AccountDto accountDto) {
+            @SessionAttribute("account") AccountDto accountDto) {
 
         String msg = topicService.createTopic(accountDto.getId(), topicVo);
         if (msg == null) {
@@ -42,13 +41,13 @@ public class ForumController {
     }
 
     @PostMapping("/list-topic")
-    public RestBean<List<TopicPreviewVo>> listTopic(@RequestParam int page,@RequestParam int type){
+    public RestBean<List<TopicPreviewVo>> listTopic(@RequestParam int page, @RequestParam int type) {
         List<TopicPreviewVo> topicPreviewVos = topicService.topicList(page, type);
         return RestBean.success(topicPreviewVos);
     }
 
     @GetMapping("/topic")
-    public RestBean<TopicDetailVo> topic(@RequestParam("tid") Integer tid){
+    public RestBean<TopicDetailVo> topic(@RequestParam("tid") Integer tid) {
         return RestBean.success(topicService.getTopicDetailVo(tid));
     }
 
@@ -56,8 +55,21 @@ public class ForumController {
     public RestBean<Void> interact(@RequestParam("tid") Integer tid,
                                    @RequestParam @Pattern(regexp = "(like|collect)") String type,
                                    @RequestParam boolean state,
-                                   @SessionAttribute("account") AccountDto account){
-
+                                   @SessionAttribute("account") AccountDto account) {
+        topicService.interact(new Interact(tid, account.getId(), new Date(), type), state);
         return RestBean.success();
+    }
+
+    @GetMapping("/cancel-collect")
+    public RestBean<Void> cancelCollect(@RequestParam("tid") Integer tid,
+                                        @SessionAttribute("account") AccountDto account) {
+        topicService.cancelCollect(tid, account.getId());
+        return RestBean.success();
+    }
+
+    @GetMapping("/collect")
+    public RestBean<List<TopicPreviewVo>> collectTopics(@SessionAttribute("account") AccountDto accountDto) {
+        List<TopicPreviewVo> topicPreviewVos = topicService.listTopicCollects(accountDto.getId());
+        return RestBean.success(topicPreviewVos);
     }
 }
