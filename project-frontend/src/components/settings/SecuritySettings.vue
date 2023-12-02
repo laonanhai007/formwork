@@ -16,7 +16,7 @@
                 <el-input v-model="securityForm.newEmail"/>
             </el-form-item>
         </el-form>
-        <el-button type="success" :icon="Select">重置邮箱</el-button>
+        <el-button type="success" :icon="Select" @click="resetEmail">重置邮箱</el-button>
 
     </div>
     <div>
@@ -49,6 +49,8 @@
 <script setup>
     import {ref} from "vue";
     import {Lock, Message, Select} from "@element-plus/icons-vue";
+    import {get, post} from "@/net";
+    import {ElMessage} from "element-plus";
 
     const securityForm = ref({
         newEmail: '',
@@ -56,6 +58,13 @@
         newPassword: '',
         repeatPassword: ''
     })
+    const resetEmail = () => {
+        get(`/api/user/reset-email?email=${securityForm.value.newEmail}`, () => {
+            ElMessage.success('重置邮箱成功!')
+        })
+
+    }
+
 </script>
 
 <style scoped>

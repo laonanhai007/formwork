@@ -8,8 +8,9 @@
                 title="发表评论">
             <div >
                 <div style="flex: 1;">
-                    <quill-editor style="height: 120px" v-model:content="content"
-                    placeholder="请发表友善评论"/>
+                    <el-input placeholder="请发表友善评论" v-model="commentContent"/>
+<!--                    <quill-editor style="height: 120px" v-model:content="content"-->
+<!--                    placeholder="请发表友善评论"/>-->
                 </div>
                 <div style="text-align: right;margin-top: 10px">
                     <el-button type="success" plain @click="submitComment">发表评论</el-button>
@@ -31,6 +32,7 @@
         tid:String,
         quote:Number
     })
+    const commentContent = ref('')
     const content = ref()
     const emit = defineEmits(['close'])
 
@@ -38,7 +40,8 @@
         post('/api/forum/add-comment',{
             tid:props.tid,
             quote:props.quote,
-            content:JSON.stringify(content.value)
+            // content:JSON.stringify(content.value)
+            content:commentContent.value
         },()=>{
             ElMessage.success('发表评论成功')
             content.value = null

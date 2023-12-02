@@ -15,24 +15,24 @@
                         </el-icon>
                         <template #title>帖子列表</template>
                     </el-menu-item>
-                    <el-menu-item index="2">
-                        <el-icon>
-                            <document/>
-                        </el-icon>
-                        <template #title>表白墙</template>
-                    </el-menu-item>
-                    <el-menu-item index="3">
-                        <el-icon>
-                            <setting/>
-                        </el-icon>
-                        <template #title>帖子管理</template>
-                    </el-menu-item>
-                    <el-menu-item index="4">
-                        <el-icon>
-                            <Star/>
-                        </el-icon>
-                        <template #title>我的收藏</template>
-                    </el-menu-item>
+<!--                    <el-menu-item index="2">-->
+<!--                        <el-icon>-->
+<!--                            <document/>-->
+<!--                        </el-icon>-->
+<!--                        <template #title>表白墙</template>-->
+<!--                    </el-menu-item>-->
+<!--                    <el-menu-item index="3">-->
+<!--                        <el-icon>-->
+<!--                            <setting/>-->
+<!--                        </el-icon>-->
+<!--                        <template #title>帖子管理</template>-->
+<!--                    </el-menu-item>-->
+<!--                    <el-menu-item index="4">-->
+<!--                        <el-icon>-->
+<!--                            <Star/>-->
+<!--                        </el-icon>-->
+<!--                        <template #title>我的收藏</template>-->
+<!--                    </el-menu-item>-->
                     <el-menu-item index="/index/settings">
                         <el-icon>
                             <setting/>

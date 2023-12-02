@@ -24,10 +24,10 @@ public interface AccountMapper {
     AccountDto findAccountUserByUsernameOrEmail(String text);
 
     @Insert("""
-            insert into db_account_info(uid, sex,phone, qq, wx, blog, `desc`) 
-            VALUES (#{uid},#{sex},#{phone},#{qq},#{wx},#{blog},#{introduce})
+            insert into db_account_info(uid, phone, qq, wx, blog, `desc`) 
+            VALUES (#{uid},#{phone},#{qq},#{wx},#{blog},#{desc})
             on duplicate key update 
-            uid=#{uid}, sex=#{sex}, phone=#{phone}, qq=#{qq}, wx=#{wx}, blog=#{blog}, `desc`=#{introduce}
+            uid=#{uid},  phone=#{phone}, qq=#{qq}, wx=#{wx}, blog=#{blog}, `desc`=#{desc}
                             """)
     void saveInfo(AccountInfo info);
 
@@ -36,4 +36,7 @@ public interface AccountMapper {
 
     @Select("select * from db_account_info where uid=#{id}")
     AccountInfo findAccountInfoById(Integer id);
+
+    @Update("update db_account set email = #{email} where id = #{uid}")
+    void updateEmailById(String email, Integer uid);
 }

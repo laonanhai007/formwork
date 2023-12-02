@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.example.service.ImageService;
+import com.example.util.FileUtil;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -25,31 +27,29 @@ public class ImageServiceImpl implements ImageService {
 
     @Resource
     RestTemplate restTemplate;
+
     @Override
     public String uploadAvatar(MultipartFile file, Integer id) {
-        MultiValueMap<String, MultipartFile> map = new LinkedMultiValueMap<>();
-        map.add("file",file);
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        File file1;
+        try {
+            file1 = FileUtil.MultipartFileToFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        map.set("file", file1);
         HttpHeaders header = new HttpHeaders();
-        // 需求需要传参为form-data格式
+        header.add("Authorization", imageAuthorization);
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
-        header.add("authorization",imageAuthorization);
-        HttpEntity<MultiValueMap<String, MultipartFile>> httpEntity = new HttpEntity<>(map, header);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(map, header);
         JSONObject response = restTemplate.postForObject(imageGetUrl, httpEntity, JSONObject.class);
         System.out.println("response = " + response);
-        return  "123";
+        System.out.println(1111);
+        return "123";
     }
 
     @Override
     public String testUploadAvatar(File file, Integer id) {
-        MultiValueMap<String, File> map = new LinkedMultiValueMap<>();
-        map.add("file",file);
-        HttpHeaders header = new HttpHeaders();
-        // 需求需要传参为form-data格式
-        header.setContentType(MediaType.MULTIPART_FORM_DATA);
-        header.add("authorization",imageAuthorization);
-        HttpEntity<MultiValueMap<String, File>> httpEntity = new HttpEntity<>(map, header);
-        JSONObject response = restTemplate.postForObject(imageGetUrl, httpEntity, JSONObject.class);
-        System.out.println("response = " + response);
-        return  "123";
+        return null;
     }
 }

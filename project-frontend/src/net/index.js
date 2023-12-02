@@ -47,4 +47,19 @@ function get(url, success, failure = defaultFailure, error = defaultError) {
         }).catch(error)
 }
 
-    export {post, get}
+function postFile(url, data, success, failure = defaultFailure, error = defaultError) {
+    axios.post(url, data, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+        withCredentials: true
+    }).then(data => {
+        if (data.data.success) {
+            success(data.data.message, data.data.statusCode)
+        } else {
+            failure(data.data.message)
+        }
+    }).catch(error)
+}
+
+export {post, get,postFile}

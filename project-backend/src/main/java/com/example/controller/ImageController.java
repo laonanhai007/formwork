@@ -1,19 +1,18 @@
 package com.example.controller;
 
 import com.example.entity.RestBean;
-import com.example.entity.auth.Account;
 import com.example.entity.user.AccountDto;
-import com.example.entity.vo.TopicVo;
+import com.example.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RequestMapping("/api/image")
 @RestController
 public class ImageController {
 
-
+    @Autowired
+    ImageService imageService;
     @PostMapping("/cache")
     public RestBean<String> uploadImage(@RequestParam("file") MultipartFile file
             , @SessionAttribute("account") AccountDto account) {
@@ -29,9 +28,11 @@ public class ImageController {
     }
 
     @PostMapping("/avatar")
-    public RestBean uploadAvatar(@RequestParam("file") MultipartFile file, @SessionAttribute("account") AccountDto account) {
+    public RestBean<String> uploadAvatar(@RequestParam("file") MultipartFile file, @SessionAttribute("account") AccountDto account) {
+        System.out.println(file.getSize());
         if (file.getSize() > 1024 * 1024)
             return RestBean.failure(400, "头像图片大小不能大于1m");
+        imageService.uploadAvatar(file,account.getId());
         return RestBean.success();
     }
 

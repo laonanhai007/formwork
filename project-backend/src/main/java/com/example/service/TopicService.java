@@ -24,4 +24,6 @@ public interface TopicService {
     String updateTopic(Integer id, TopicUpdateVo topicUpdateVo);
 
     String createComment(AddCommentVo addCommentVo, Integer uid);
+
+    List<CommentVo> listComments(Integer tid, Integer pageNum);
 }

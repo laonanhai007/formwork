@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.entity.vo.CommentVo;
 import com.example.entity.vo.TopicDetailVo;
 import com.example.entity.vo.TopicPreviewVo;
 import com.example.service.ImageService;
@@ -37,6 +38,8 @@ class ProjectBackendApplicationTests {
     TopicService topicService;
     @Test
     void testTopics(){
+        List<CommentVo> commentVos = topicService.listComments(6, null);
+        System.out.println("commentVos = " + commentVos);
     }
 
 

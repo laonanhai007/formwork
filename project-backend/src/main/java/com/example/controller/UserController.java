@@ -25,13 +25,20 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/save-info")
-    public RestBean saveInfo(@RequestBody AccountInfo info,@SessionAttribute("account") AccountDto accountDto) {
+    public RestBean<String> saveInfo(@RequestBody AccountInfo info, @SessionAttribute("account") AccountDto accountDto) {
         if (info.getUid() == null) return RestBean.failure(402, "请填写完整信息");
-        if (info.getUid().equals(accountDto.getId())){
+        if (info.getUid().equals(accountDto.getId())) {
             userService.saveUserInfo(info);
             return RestBean.success("保存成功");
-        }
-        else return RestBean.failure(402,"非法表单操作!");
+        } else return RestBean.failure(402, "非法表单操作!");
 
+    }
+
+    @GetMapping("/reset-email")
+    public RestBean<String> updateEmail(@RequestParam("email") String email, @SessionAttribute("account") AccountDto accountDto) {
+        String msg = userService.updateEmail(email, accountDto.getId());
+        if (msg == null)
+            return RestBean.success();
+        else return RestBean.failure(405, msg);
     }
 }

@@ -5,6 +5,7 @@ import com.example.entity.AccountInfo;
 import com.example.entity.Topic;
 import com.example.entity.TopicComment;
 import com.example.entity.TopicType;
+import com.example.entity.auth.Account;
 import com.example.entity.dto.Interact;
 import com.example.entity.vo.*;
 import com.example.mapper.AccountMapper;
@@ -33,6 +34,7 @@ public class TopicServiceImpl implements TopicService {
     StringRedisTemplate redisTemplate;
     @Autowired
     TopicCommentMapper commentMapper;
+
     @Override
     public List<TopicType> listTypes() {
         return topicMapper.findAll();
@@ -134,15 +136,35 @@ public class TopicServiceImpl implements TopicService {
         return null;
     }
 
-//    评论
+    //    评论
     @Override
     public String createComment(AddCommentVo addCommentVo, Integer uid) {
         TopicComment comment = new TopicComment();
         comment.setUid(uid);
-        BeanUtils.copyProperties(addCommentVo,comment);
+        BeanUtils.copyProperties(addCommentVo, comment);
         comment.setTime(new Date());
         commentMapper.insertComment(comment);
         return null;
+    }
+
+    @Override
+    public List<CommentVo> listComments(Integer tid, Integer pageNum) {
+
+        List<TopicComment> topicComments = commentMapper.selectTopicCommentsById(tid);
+        return topicComments.stream().map(comment -> {
+            CommentVo vo = new CommentVo();
+
+            AccountInfo accountById = accountMapper.findAccountInfoById(comment.getUid());
+            CommentVo.User user = new CommentVo.User();
+            BeanUtils.copyProperties(accountById, user);
+            vo.setUser(user);
+            BeanUtils.copyProperties(comment, vo);
+            if (comment.getQuote() > 0) {
+                Integer quote = comment.getQuote();
+                vo.setQuote(commentMapper.selectByCommentId(quote).getContent());
+            }
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     private final Map<String, Boolean> state = new HashMap<>();

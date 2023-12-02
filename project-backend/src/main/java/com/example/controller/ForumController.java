@@ -77,12 +77,18 @@ public class ForumController {
         String s = topicService.updateTopic(accountDto.getId(), topicUpdateVo);
         if (s == null)
             return RestBean.success("更新帖子成功");
-        else return RestBean.failure(402,"更新文章失败");
+        else return RestBean.failure(402, "更新文章失败");
     }
 
     @PostMapping("/add-comment")
-    public RestBean<Void> addComment(@RequestBody AddCommentVo addCommentVo,@SessionAttribute("account") AccountDto accountDto){
-        topicService.createComment(addCommentVo,accountDto.getId());
+    public RestBean<Void> addComment(@RequestBody AddCommentVo addCommentVo, @SessionAttribute("account") AccountDto accountDto) {
+        topicService.createComment(addCommentVo, accountDto.getId());
         return RestBean.success();
+    }
+
+    @GetMapping("/comments")
+    public RestBean<List<CommentVo>> listComments(@RequestParam("tid") Integer tid,
+                                                  Integer page) {
+        return RestBean.success(topicService.listComments(tid,page));
     }
 }
